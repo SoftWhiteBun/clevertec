@@ -10,6 +10,7 @@ public class OperationInfo {
     HashMap<Integer, Integer> productsInfo;
     Integer card;
     Double balance;
+    String pathToFile;
 
     public OperationInfo() {
     }

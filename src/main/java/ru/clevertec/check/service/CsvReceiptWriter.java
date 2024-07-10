@@ -1,5 +1,7 @@
 package ru.clevertec.check.service;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import ru.clevertec.check.exception.CustomException;
@@ -11,20 +13,22 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.format.DateTimeFormatter;
 
+@Getter
+@Setter
 public class CsvReceiptWriter implements ICsvDataWriter<Receipt> {
 
-    private final String filePath;
-
+    private static final String DEFAULT = "result.csv";
     private static final String[] RESULT_DATETIME_HEADERS = {"Date", "Time"};
     private static final String[] RESULT_PRODUCTS_HEADERS = {"QTY", "DESCRIPTION", "PRICE", "DISCOUNT", "TOTAL"};
     private static final String[] RESULT_DISCOUNT_CARD_HEADERS = {"DISCOUNT CARD", "DISCOUNT PERCENTAGE"};
     private static final String[] RESULT_TOTAL_PRICE_HEADERS = {"TOTAL PRICE", "TOTAL DISCOUNT", "TOTAL WITH DISCOUNT"};
 
-    public CsvReceiptWriter(String filePath) {
-        this.filePath = filePath;
-    }
+    @Override
+    public void writeError(String filePath, CustomException e) {
+        if (filePath == null) {
+            filePath = DEFAULT;
+        }
 
-    public void writeError(CustomException e) {
         File file = new File(filePath);
         try (FileWriter fw = new FileWriter(file)) {
             fw.write("ERROR\n");
@@ -35,7 +39,7 @@ public class CsvReceiptWriter implements ICsvDataWriter<Receipt> {
     }
 
     @Override
-    public void fileWriter(Receipt receipt) {
+    public void fileWriter(String filePath, Receipt receipt) {
         try {
             File file = new File(filePath);
             CSVPrinter printer = new CSVPrinter(new PrintWriter(file), CSVFormat.DEFAULT.builder().setDelimiter(";").build());
@@ -72,30 +76,6 @@ public class CsvReceiptWriter implements ICsvDataWriter<Receipt> {
         });
         printer.println();
         printer.printRecord(resultDiscountCardHeaders);
-    }
-
-    @Override
-    public void consoleWriter(Receipt receipt) {
-        if (receipt.getCard() != null) {
-            printConsolePartialData(receipt);
-            System.out.println();
-            System.out.println("Discount card: " + receipt.getCard().getNumber() + ", amount: " + receipt.getCard().getAmount());
-            System.out.println("Total: " + receipt.getTotal() + ", Discount: " + receipt.getDiscount() + ", Total with discount: " + (receipt.getTotal() - receipt.getDiscount()));
-            System.out.println();
-            return;
-        }
-        printConsolePartialData(receipt);
-        System.out.println("No Discount card");
-        System.out.println("Total: " + receipt.getTotal() + ", Discount: " + receipt.getDiscount() + ", Total with discount: " + (receipt.getTotal() - receipt.getDiscount()));
-        System.out.println();
-    }
-
-    private void printConsolePartialData(Receipt receipt) {
-        System.out.println("Time: " + receipt.getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + receipt.getDateTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-        System.out.println();
-        System.out.println("Product items");
-        System.out.println();
-        receipt.getItems().forEach(f -> System.out.println(f.getDescription() + "\t\t" + f.getPrice() + "\t\t" + f.getQuantity() + "\t\t" + f.getTotal() + "\t\t" + f.getDiscount()));
     }
 
 }

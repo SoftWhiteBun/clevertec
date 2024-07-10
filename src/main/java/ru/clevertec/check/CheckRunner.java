@@ -15,18 +15,17 @@ import java.util.Optional;
 
 public class CheckRunner {
 
-    private static final String PRODUCTS_CSV = "src/main/resources/products.csv";
     private static final String DISCOUNT_CARDS_CSV = "src/main/resources/discountCards.csv";
-    private static final String RESULT = "result.csv";
 
     public static void main(String[] args) {
+
         ApplicationArgsParser parser = new ApplicationArgsParser(args);
-        CsvReceiptWriter writer = new CsvReceiptWriter(RESULT);
+        CsvReceiptWriter writer = new CsvReceiptWriter();
 
         try {
             OperationInfo info = parser.getOperationInfo();
 
-            CsvBaseModelsFactory factory = new CsvBaseModelsFactory(PRODUCTS_CSV, DISCOUNT_CARDS_CSV);
+            CsvBaseModelsFactory factory = new CsvBaseModelsFactory(info.getPathToFile(), DISCOUNT_CARDS_CSV);
             ArrayList<Product> products = factory.getProducts();
             ArrayList<DiscountCard> cards = factory.getDiscountCards();
 
@@ -40,10 +39,9 @@ public class CheckRunner {
                 throw new NotEnoughMoneyException();
             }
 
-            writer.fileWriter(receipt);
-//            writer.consoleWriter(receipt);
+            writer.fileWriter(parser.getSaveToFile(), receipt);
         } catch (CustomException e) {
-            writer.writeError(e);
+            writer.writeError(parser.getSaveToFile(), e);
         }
     }
 

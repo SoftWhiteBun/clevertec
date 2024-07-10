@@ -1,14 +1,20 @@
 package ru.clevertec.check.service;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import ru.clevertec.check.exception.BadRequestException;
 import ru.clevertec.check.models.OperationInfo;
 
 import java.util.HashMap;
 
-@AllArgsConstructor
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class ApplicationArgsParser {
-    private String[] args;
+
+    private final String[] args;
+    private String saveToFile;
 
     public OperationInfo getOperationInfo() throws BadRequestException {
         OperationInfo info = new OperationInfo();
@@ -22,17 +28,27 @@ public class ApplicationArgsParser {
                 } else if (arg.contains("balanceDebitCard=")) {
                     String[] balance = arg.split("=");
                     info.setBalance(Double.parseDouble(balance[1]));
+                } else if (arg.contains("pathToFile=")) {
+                    String[] balance = arg.split("=");
+                    info.setPathToFile(balance[1]);
+                } else if (arg.contains("saveToFile=")) {
+                    String[] balance = arg.split("=");
+                    setSaveToFile(balance[1]);
                 } else {
                     String[] product = arg.split("-");
                     if (productsInfo.containsKey(Integer.parseInt(product[0]))) {
                         productsInfo.compute(Integer.parseInt(product[0]), (k, v) -> v + Integer.parseInt(product[1]));
-                    }
-                    else {
-                        productsInfo.put(Integer.parseInt(product[0]),Integer.parseInt(product[1]));
+                    } else {
+                        productsInfo.put(Integer.parseInt(product[0]), Integer.parseInt(product[1]));
                     }
                 }
             }
         } catch (RuntimeException e) {
+            throw new BadRequestException();
+        }
+
+        if (getSaveToFile() == null || getSaveToFile().isEmpty() ||
+                info.getPathToFile() == null || info.getPathToFile().isEmpty()) {
             throw new BadRequestException();
         }
 
