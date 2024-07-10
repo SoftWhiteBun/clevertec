@@ -28,12 +28,18 @@ public class ApplicationArgsParser {
                 } else if (arg.contains("balanceDebitCard=")) {
                     String[] balance = arg.split("=");
                     info.setBalance(Double.parseDouble(balance[1]));
-                } else if (arg.contains("pathToFile=")) {
-                    String[] balance = arg.split("=");
-                    info.setPathToFile(balance[1]);
                 } else if (arg.contains("saveToFile=")) {
                     String[] balance = arg.split("=");
                     setSaveToFile(balance[1]);
+                } else if (arg.contains("datasource.url=")) {
+                    String[] balance = arg.split("=");
+                    info.setUrl(balance[1]);
+                } else if (arg.contains("datasource.username=")) {
+                    String[] balance = arg.split("=");
+                    info.setUsername(balance[1]);
+                } else if (arg.contains("datasource.password=")) {
+                    String[] balance = arg.split("=");
+                    info.setPassword(balance[1]);
                 } else {
                     String[] product = arg.split("-");
                     if (productsInfo.containsKey(Integer.parseInt(product[0]))) {
@@ -47,8 +53,7 @@ public class ApplicationArgsParser {
             throw new BadRequestException();
         }
 
-        if (getSaveToFile() == null || getSaveToFile().isEmpty() ||
-                info.getPathToFile() == null || info.getPathToFile().isEmpty()) {
+        if (getSaveToFile() == null || getSaveToFile().isEmpty()) {
             throw new BadRequestException();
         }
 

@@ -6,13 +6,14 @@ import ru.clevertec.check.models.ReceiptItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ReceiptItemUtils {
 
-    public static ArrayList<ReceiptItem> getReceiptItems(ArrayList<Product> products,
+    public static List<ReceiptItem> getReceiptItems(List<Product> products,
                                                          HashMap<Integer, Integer> productsInfo,
                                                          int cardDiscount) throws BadRequestException {
-        ArrayList<ReceiptItem> items = new ArrayList<>();
+        List<ReceiptItem> items = new ArrayList<>();
         for (Integer id : productsInfo.keySet()) {
             Product product = findById(products, id);
             if (productsInfo.get(id) <= product.getQuantity()) {
@@ -29,7 +30,7 @@ public class ReceiptItemUtils {
         return items;
     }
 
-    private static Product findById(ArrayList<Product> products, int id) throws BadRequestException {
+    private static Product findById(List<Product> products, int id) throws BadRequestException {
         for (Product elem : products) {
             if (elem.getId() == id) {
                 return elem;

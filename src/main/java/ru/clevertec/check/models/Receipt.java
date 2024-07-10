@@ -3,18 +3,18 @@ package ru.clevertec.check.models;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class Receipt {
 
     private final LocalDateTime dateTime;
-    private final ArrayList<ReceiptItem> items;
+    private final List<ReceiptItem> items;
     private final DiscountCard card;
     private final double total;
     private final double discount;
 
-    public Receipt(ArrayList<ReceiptItem> items, DiscountCard card) {
+    public Receipt(List<ReceiptItem> items, DiscountCard card) {
         this.dateTime = LocalDateTime.now();
         this.items = items;
         this.card = card;
