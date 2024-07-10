@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class ApplicationArgsParser {
 
     private final String[] args;
-    private String saveToFile;
+
 
     public OperationInfo getOperationInfo() throws BadRequestException {
         OperationInfo info = new OperationInfo();
